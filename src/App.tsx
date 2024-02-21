@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import { useMsal, useMsalAuthentication } from "@azure/msal-react";
+import { InteractionType } from "@azure/msal-browser";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  useMsalAuthentication(InteractionType.Redirect);
+  const [m_strUser, setm_strUser] = useState<string>("");
+
+  function Render() {
+    const { accounts } = useMsal();
+
+    try {
+      const username = accounts[0].username;
+      setm_strUser(username);
+    } catch (e) {}
+  }
+
+  if (m_strUser != "")
+    return (
+      <div className="App">
+        <div>User: {m_strUser}</div>
+      </div>
+    );
+  else
+    return (
+      <>
+        {Render()}
+        <div>Please wait...</div>
+      </>
+    );
 }
 
 export default App;
